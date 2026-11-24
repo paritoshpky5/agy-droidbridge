@@ -1,6 +1,12 @@
 # Setup and troubleshooting
 
-Start with the [quick start](../README.md#get-started). The bridge needs a signed-in `agy` installation with `--agent`, `--disable-slash-commands`, `--output-format`, and `--model`. See the [Antigravity command reference](https://antigravity.google/docs/cli/reference/#command-line-flags).
+Start with the [quick start](../README.md#get-started).
+
+## Check the Antigravity CLI
+
+Run `agy --version` and `agy models` from Termux. The bridge needs a signed-in CLI with `--agent`, `--disable-slash-commands`, `--output-format`, and `--model`. See the [Antigravity command reference](https://antigravity.google/docs/cli/reference/#command-line-flags).
+
+If you need a CLI that runs on ARM64 Termux, [agy-termux-musl](https://github.com/Aarstad/agy-termux-musl) documents a community installation option. Google lists its supported CLI installers in the [Antigravity CLI guide](https://antigravity.google/docs/getting-started?tab=cli). Return to the quick start once the version and model list work in Termux.
 
 ## Approve the bridge workspace once
 
@@ -41,6 +47,7 @@ Run `./agy-droidbridge status` to check liveness. Use `./agy-droidbridge start`,
 | --- | --- |
 | Setup cannot find `agy` | Run `agy --version`. For an executable outside your `PATH`, use `AGY_BIN=/path/to/agy ./agy-droidbridge install`. |
 | Antigravity has not loaded the DroidBridge text agent | Run `./agy-droidbridge trust` and complete the workspace approval before starting the bridge. |
+| Health check reports `curl: (7) Failed to connect` | From the checkout, run `./agy-droidbridge status`. If DroidBridge has been installed, run `./agy-droidbridge start`. Use the port shown in its output when checking `/healthz`. |
 | The tool cannot connect | Run `./agy-droidbridge status`. Check that the tool sends requests from the phone, allows HTTP for localhost, and uses the base URL for its API format. |
 | The API returns `401` | Copy the key from the path printed by setup. OpenAI clients send it as bearer authentication. |
 | Model is unavailable | Run `agy models` to check sign-in, then run `./agy-droidbridge models` to refresh the list. |

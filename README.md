@@ -12,23 +12,38 @@ The ARM64 bridge executable is **1.54 MiB**. Google sign-in and model usage go t
 
 ## Get started
 
-Use an ARM64 Android phone with Termux and a working Antigravity CLI. In Termux, `uname -m` should print `aarch64`. Run `agy models` and finish Google sign-in if prompted.
+### 1. Check Antigravity in Termux
+
+You need an ARM64 Android phone and a signed-in Antigravity CLI that runs from the same Termux shell.
+
+```sh
+uname -m
+agy --version
+agy models
+```
+
+Look for `aarch64`, a CLI version, and a model list. If Antigravity asks you to sign in, open `agy`, finish sign-in, and exit the CLI before continuing. If `agy --version` fails, see [the CLI prerequisite](docs/setup.md#check-the-antigravity-cli).
+
+### 2. Install and start DroidBridge
 
 ```sh
 pkg install git
-git clone https://github.com/paritoshpky5/agy-droidbridge.git
-cd agy-droidbridge
+git clone https://github.com/paritoshpky5/agy-droidbridge.git &&
+cd agy-droidbridge &&
 ./agy-droidbridge install
 ```
 
-Setup builds the bridge, creates your API key, and starts the server once the Antigravity workspace is approved. If setup asks for approval, run `./agy-droidbridge trust`, approve the folder shown in Antigravity, exit Antigravity, then run `./agy-droidbridge start`.
+Setup builds the bridge, creates your API key, and starts the server once the Antigravity workspace is approved. If setup asks for approval, run `./agy-droidbridge trust`. Approve the folder shown in Antigravity, exit Antigravity, then run `./agy-droidbridge start`.
 
-Check that the bridge is running from Termux.
+### 3. Verify the local API
+
+Wait for `Bridge running at http://127.0.0.1:8766/v1`, then run this in Termux.
 
 ```sh
 curl -fsS http://127.0.0.1:8766/healthz
-# {"ok":true,"service":"agy-droidbridge"}
 ```
+
+The response should be `{"ok":true,"service":"agy-droidbridge"}`. If curl reports `Failed to connect`, run `./agy-droidbridge status` from the checkout and check the [startup steps](docs/setup.md#common-issues).
 
 ## Connect a BYOK client
 
