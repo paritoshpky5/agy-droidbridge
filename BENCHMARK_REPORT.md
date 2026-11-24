@@ -29,8 +29,9 @@ These measurements cover executable size on disk and emulator idle memory. Physi
 | DroidBridge executable files after setup, including the copy cached for retries | 3.08 MiB |
 | Official Antigravity 1.5.16 ARM64 Linux musl download, when needed | 84.37 MiB |
 | Official Antigravity executable on disk | 222.43 MiB |
+| Google Play Termux ARM64 PRoot and resolver packages, including dependencies if needed | About 0.55 MiB installed |
 
-The current installer adds PRoot and resolver configuration when needed. The original v0.1.0 installer added a compiler toolchain, Python, and `patchelf`. With a compatible CLI already available, setup reuses it. The Windows comparison below measures the bridge processes with a stub CLI. [DroidBridge release](https://github.com/paritoshpky5/agy-droidbridge/releases/tag/v0.1.2) · [Antigravity CLI release](https://github.com/google-antigravity/antigravity-cli/releases/tag/1.5.16)
+The package estimate uses the `Installed-Size` fields for `proot`, `resolv-conf`, `libandroid-shmem`, and `libtalloc`. The original v0.1.0 installer added a compiler toolchain, Python, and `patchelf`. With a compatible CLI already available, setup reuses it. The Windows comparison below measures the bridge processes with a stub CLI. [Termux ARM64 package catalog](https://termux.net/dists/stable/main/binary-aarch64/Packages) · [DroidBridge release](https://github.com/paritoshpky5/agy-droidbridge/releases/tag/v0.1.2) · [Antigravity CLI release](https://github.com/google-antigravity/antigravity-cli/releases/tag/1.5.16)
 
 ## Windows comparison with Node and Python
 
