@@ -15,27 +15,37 @@ async function availablePort() {
 }
 
 export async function startProxy(kind, overrides = {}) {
-  const env = Object.fromEntries(Object.entries(process.env).filter(([name]) => !/^AGY_|^NODE_OPTIONS$/i.test(name)));
+  const env = Object.fromEntries(Object.entries(process.env).filter(([name]) => !/^AGY_|^NODE_OPTIONS$|^PYTHON/i.test(name)));
   const fixture = process.env.AGY_TEST_MOCK_BIN;
-  const entry = process.env[kind === "rust" ? "AGY_TEST_RUST_BIN" : "AGY_TEST_NODE_ENTRY"];
-  if (!fixture || !entry) throw new Error("Set AGY_TEST_MOCK_BIN and the matching proxy executable or Node entry.");
+  const python = kind === "python";
+  const rust = kind === "rust";
+  const entry = process.env[rust ? "AGY_TEST_RUST_BIN" : python ? "AGY_TEST_PYTHON_BIN" : "AGY_TEST_NODE_ENTRY"];
+  const packages = process.env.AGY_TEST_PYTHON_PACKAGES;
+  if (!fixture || !entry || (python && !packages)) {
+    throw new Error("Set AGY_TEST_MOCK_BIN and the matching proxy executable, Node entry, or Python executable and package directory.");
+  }
   const directory = await mkdtemp(join(tmpdir(), "agy-contract-"));
   const settings = join(directory, "settings.json");
   await writeFile(settings, "{}\n");
   const port = await availablePort();
   const url = "http://127.0.0.1:" + port;
+  const cli = resolve(fixture);
+  const executable = rust || python ? resolve(entry) : process.execPath;
+  const args = python
+    ? ["-P", "-S", "-m", "uvicorn", "main:app", "--host", "127.0.0.1", "--port", String(port), "--log-level", "warning"]
+    : rust ? [] : [resolve(entry)];
   const start = performance.now();
-  const child = spawn(kind === "rust" ? resolve(entry) : process.execPath,
-    kind === "rust" ? [] : [resolve(entry)], {
-      cwd: directory,
-      env: {
-        ...env, AGY_BIN: resolve(fixture), AGY_SETTINGS_PATH: settings,
-        AGY_PORT: String(port), AGY_HOST: "127.0.0.1",
-        UNRELATED_PRIVATE_KEY: "not-a-real-key",
-        ...overrides,
-      },
-      stdio: ["ignore", "pipe", "pipe"],
-    });
+  const child = spawn(executable, args, {
+    cwd: directory,
+    env: {
+      ...env, AGY_BIN: cli, AGY_SETTINGS_PATH: settings,
+      AGY_PORT: String(port), AGY_HOST: "127.0.0.1",
+      UNRELATED_PRIVATE_KEY: "not-a-real-key",
+      ...(python ? { AGY_EXECUTABLE: cli, PYTHONPATH: resolve(packages) } : {}),
+      ...overrides,
+    },
+    stdio: ["ignore", "pipe", "pipe"],
+  });
   let logs = "";
   for (const output of [child.stdout, child.stderr]) {
     output.setEncoding("utf8").on("data", (chunk) => {
@@ -60,7 +70,7 @@ export async function startProxy(kind, overrides = {}) {
         throw processError ?? new Error("Proxy exited early: " + logs);
       }
       try {
-        if ((await fetch(url + "/healthz", { signal: AbortSignal.timeout(500) })).ok) {
+        if ((await fetch(url + (python ? "/" : "/healthz"), { signal: AbortSignal.timeout(500) })).ok) {
           return { url, pid: child.pid, settings, startupMs: performance.now() - start, stop, logs: () => logs };
         }
       } catch (error) {

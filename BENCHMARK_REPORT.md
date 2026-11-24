@@ -21,22 +21,35 @@ pwsh ./benchmarks/android-idle.ps1 -Serial emulator-5554
 
 These measurements cover executable size on disk and emulator idle memory. Physical-device RAM, full Termux and CLI memory, battery use, and live generation performance remain unmeasured.
 
-## Windows comparison with the Node reference
+## Windows comparison with Node and Python
 
-On November 24, 2026, both servers ran on the same Windows x64 host with a Ryzen 5 3550H. The reference server ran on Node.js 24.14.0 at [98107d5](https://github.com/anyrobert/agy-api-proxy/tree/98107d5cdb9e1bb7ed43e88b5e62e0adcaede43f). DroidBridge used the optimized Windows binary. Both used the same mock CLI with a 175 ms delay per request. Each server ran three rounds with 24 requests per round and four concurrent client requests per batch.
+On November 24, 2026, all three servers ran on the same Windows x64 host with a Ryzen 5 3550H. DroidBridge used its optimized Windows build. The [Node reference](https://github.com/anyrobert/agy-api-proxy/tree/98107d5cdb9e1bb7ed43e88b5e62e0adcaede43f) ran at commit `98107d5` on Node.js 24.14.0. The [Python reference](https://pypi.org/project/antigravity-proxy/0.1.1/) ran on CPython 3.14.3 with FastAPI 0.165.0 and Uvicorn 0.54.0.
 
-| Metric | Node reference | AGY DroidBridge |
-| --- | ---: | ---: |
-| Idle working set | 55.28 MiB | 6.28 MiB |
-| Peak working set | 58.63 MiB | 7.07 MiB |
-| Peak server plus mock CLI working set | 62.96 MiB | 10.81 MiB |
-| Startup to liveness | 142.67 ms | 48.46 ms |
-| Executable on disk | 87.15 MiB | 1.66 MiB |
-| Request latency p50 | 410.46 ms | 383.49 ms |
-| Request latency p95 | 792.67 ms | 748.23 ms |
-| Throughput | 5.10 req/s | 5.34 req/s |
-| Server CPU time per run | 234.38 ms | 78.13 ms |
+Each workload ran three rounds of 24 non-streaming Chat Completions requests per server. Requests used the same prompt and model ID, and all three servers called the same mock CLI with a 175 ms delay per generation. The runner rotated server order between rounds.
 
-The server-plus-mock-CLI number is the median of each run's peak simultaneous working set. Startup includes health-check polling. Latency percentiles pool request-level observations. Other statistics use the median of the three runs. The executable sizes cover `node.exe` and `agy-droidbridge.exe`.
+### Four concurrent requests
+
+| Metric | AGY DroidBridge | Node reference | Python reference |
+| --- | ---: | ---: | ---: |
+| Idle working set | 6.29 MiB | 55.48 MiB | 50.68 MiB |
+| Peak server working set | 7.23 MiB | 58.96 MiB | 54.28 MiB |
+| Peak server plus mock CLI working set | 10.97 MiB | 63.29 MiB | 71.60 MiB |
+| Startup to liveness | 45.54 ms | 146.20 ms | 672.31 ms |
+| Request latency p50 | 387.15 ms | 411.10 ms | 213.83 ms |
+| Request latency p95 | 755.00 ms | 792.42 ms | 238.11 ms |
+| Throughput | 5.32 req/s | 5.06 req/s | 17.40 req/s |
+| Peak concurrent mock CLI processes | 1 | 1 | 4 |
+
+The Python server handled four CLI jobs in parallel. DroidBridge and the Node reference ran one generation at a time. The concurrent results show how the implementations handle the same client load, including their different CLI scheduling.
+
+### One request at a time
+
+| Metric | AGY DroidBridge | Node reference | Python reference |
+| --- | ---: | ---: | ---: |
+| Request latency p50 | 187.86 ms | 196.61 ms | 195.93 ms |
+| Request latency p95 | 195.27 ms | 202.38 ms | 198.63 ms |
+| Throughput | 5.31 req/s | 5.07 req/s | 5.09 req/s |
+
+Working set is sampled by process. Peak server-plus-mock-CLI working set is the median of each run's highest sampled total for the server and its children. Startup includes HTTP liveness polling. Latency percentiles pool requests across three rounds. Other statistics use the median of the three runs.
 
 See the [test report](TEST_REPORT.md#optional-compatibility-and-benchmark-runs) for the Windows comparison commands.

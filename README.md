@@ -49,9 +49,9 @@ OpenAI streaming clients receive buffered chunks after generation finishes. See 
 | --- | --- |
 | Android ARM64 executable on disk | **1.54 MiB** |
 | Idle bridge memory on an Android 14 x86-64 emulator | **4.21–4.27 MiB** median RSS across two trials |
-| Idle working set in the Windows mock benchmark | **6.28 MiB** for DroidBridge, **55.28 MiB** for the Node reference |
+| Idle working set in the Windows mock benchmark | **6.29 MiB** for DroidBridge, **55.48 MiB** for the Node reference, **50.68 MiB** for the Python reference |
 
-The Windows comparison measured **89% lower idle working set** for DroidBridge on that host. Both idle measurements cover the bridge process alone. See the [benchmark report](BENCHMARK_REPORT.md) for the workload, raw Android readings, and reproduction commands.
+The Windows comparison measured **about 88% lower idle working set** for DroidBridge against the Python reference. The Python server finished the four-client workload sooner by launching CLI processes in parallel. The idle measurements cover the bridge process alone. See the [benchmark report](BENCHMARK_REPORT.md) for both workloads and reproduction commands.
 
 ## Use your Antigravity allowance
 

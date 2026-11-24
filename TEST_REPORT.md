@@ -46,6 +46,20 @@ node --test tests/contract.mjs
 node benchmarks/compare.mjs
 ```
 
+To include the Python reference, keep the same Rust, Node, and mock paths. From PowerShell, install the benchmark dependencies into a separate directory and point the runner at the base CPython executable and that directory.
+
+```powershell
+$env:AGY_TEST_PYTHON_BIN = (Get-Command python).Source
+$env:AGY_TEST_PYTHON_PACKAGES = Join-Path (Get-Location) 'target/python-benchmark'
+& $env:AGY_TEST_PYTHON_BIN -m pip install --target $env:AGY_TEST_PYTHON_PACKAGES 'antigravity-proxy==0.1.1' 'fastapi==0.165.0' 'uvicorn==0.54.0'
+node benchmarks/compare.mjs
+$env:AGY_BENCH_CONCURRENCY = '1'
+node benchmarks/compare.mjs
+Remove-Item Env:AGY_BENCH_CONCURRENCY
+```
+
+The benchmark launches one Uvicorn worker on loopback and directs it to the same mock executable used by the Rust and Node servers. See the [benchmark report](BENCHMARK_REPORT.md#windows-comparison-with-node-and-python) for the measured runtime versions and results.
+
 ### Android emulator
 
 The probe builds a test APK locally. Use a booted x86-64 Android emulator, JDK 21, Android SDK Build Tools 36.0.0, Platform 36, and NDK 28.2.13676358. From PowerShell with `ANDROID_HOME` set to your SDK path, run:

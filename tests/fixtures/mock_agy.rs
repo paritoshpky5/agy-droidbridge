@@ -5,6 +5,7 @@ fn main() {
     let prompt = argv.last().expect("prompt");
     let (json_mode, model) = match &argv[..] {
         [permission, print, _] if permission == "--dangerously-skip-permissions" && print == "-p" => (false, None),
+        [flag, model, print, _] if flag == "--model" && model == "gemini-3.5-flash-low" && print == "--prompt" => (false, None),
         [agent, name, disable, format, json, print, _]
             if restricted(agent, name, disable, format, json) && print == "-p" => (true, None),
         [agent, name, disable, format, json, flag, model, print, _]
