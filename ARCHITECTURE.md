@@ -1,6 +1,6 @@
 # Architecture
 
-AGY DroidBridge runs an HTTP server inside Termux. An Android chat app sends a text request to localhost. The bridge validates the request, formats the conversation as text, and starts the installed Antigravity CLI with its headless JSON output mode. Antigravity manages sign-in and sends model requests through its own connection.
+AGY DroidBridge runs an HTTP server inside Termux. A compatible app, script, or tool sends a text request to localhost using the bridge's URL and application key. The bridge validates the request, formats the messages as text, and starts the installed Antigravity CLI with its headless JSON output mode. Antigravity manages sign-in and sends model requests through its own connection.
 
 ## HTTP and model selection
 

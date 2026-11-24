@@ -60,6 +60,6 @@ pwsh ./tests/emulator/verify.ps1 -Serial emulator-5554
 
 ## Physical phone check
 
-On an ARM64 Android phone with Termux, follow the README through installation and workspace approval. Run `./agy-droidbridge models`, then send a single chat request using the [setup guide](docs/setup.md#make-a-request-from-termux). Check that your actual chat app connects on the same device and can send a second request after `./agy-droidbridge restart`.
+On an ARM64 Android phone with Termux, follow the README through installation and workspace approval. Run `./agy-droidbridge models`, then send one text request using the [setup guide](docs/setup.md#make-a-request-from-termux). Check that your chosen BYOK client connects on the same device and can send a second request after `./agy-droidbridge restart`.
 
 Live model generation, an authenticated Google session on the phone, and physical Termux execution remain pending.

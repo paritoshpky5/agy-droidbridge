@@ -1,14 +1,16 @@
 # AGY DroidBridge
 
-![AGY DroidBridge connects an Android chat app to Antigravity running in Termux](docs/media/overview.png)
+![AGY DroidBridge connects BYOK apps and tools to Antigravity running in Termux](docs/media/overview.png)
 
-**Use the Antigravity CLI from the chat app on your Android phone.**
+**Use your Antigravity plan in BYOK apps and tools.**
 
-AGY DroidBridge is a small Rust server that runs in Termux. Point an OpenAI-compatible chat app at `http://127.0.0.1:8766/v1` and the bridge passes its text requests to `agy`. The Antigravity CLI handles Google sign-in and generates the replies.
+When a tool asks you to bring your own key (BYOK), give it DroidBridge's local URL and the key created during setup. DroidBridge runs in Termux on Android and sends text requests to `agy`. The Antigravity CLI handles Google sign-in and model usage.
 
-## Why I built it
+## Use the allowance you already have
 
-Antigravity already runs in a Termux terminal. I wanted a way to use the same session from an Android chat app. I built the bridge in Rust so the server can run as one native executable on the phone.
+DroidBridge uses your signed-in account's existing Antigravity allowance. For requests that fit within that allowance, you can skip a separate metered API bill. A paid Google AI plan can also work out cheaper if its price is below your usual API spend and its included usage covers your workload. Models, quotas, and any credit overages depend on your account. [Antigravity plans and overages](https://antigravity.google/docs/plans)
+
+**Already claimed Google AI Pro through Jio?** Sign in to Antigravity with the Google account you used to redeem it. Jio says its offer is closed to new claims. Eligible users who already redeemed it can retain up to 18 months under the offer terms. Google lists different Antigravity limits for promotional and paid plans. [Jio offer terms](https://www.jio.com/jcms/en-in/jio-google-gemini-terms-and-conditions/) · [Antigravity plan limits](https://antigravity.google/docs/plans#baseline-quota)
 
 ## Get started
 
@@ -28,26 +30,20 @@ The installer builds the server and creates your private API key. Allow a few mi
 ./agy-droidbridge start
 ```
 
-The running server reports its URL. The key is stored in the file listed below.
+## Connect a BYOK client
 
-Open the chat app on **the same phone** and add an OpenAI-compatible provider.
+Use an app, script, or tool that accepts **both a custom base URL and an API key**. Requests need to come directly from the same Android device. Select the provider format the client supports.
 
-| App setting | Enter this |
-| --- | --- |
-| API type | Chat Completions |
-| Base URL | `http://127.0.0.1:8766/v1` |
-| API key | The contents of `~/.local/share/agy-droidbridge/api-key` |
-| Model | If the app asks for one, run `./agy-droidbridge models` and pick an ID from the refreshed list. |
+| Provider format | Custom base URL | Text API |
+| --- | --- | --- |
+| OpenAI-compatible | `http://127.0.0.1:8766/v1` | Chat Completions and model listing |
+| Anthropic-compatible | `http://127.0.0.1:8766` | Messages |
+
+For the key or token field, use the contents of `~/.local/share/agy-droidbridge/api-key`. That key authenticates the client to DroidBridge. Your Google credentials stay with the Antigravity CLI. If the tool asks for a model, run `./agy-droidbridge models` and pick an ID from the refreshed list.
 
 `./agy-droidbridge status` checks the running server. Use `./agy-droidbridge stop`, `start`, or `restart` to manage it. See the [setup guide](docs/setup.md) for a first request with curl, model refresh, and troubleshooting.
 
-## What you can do
-
-- Use OpenAI-compatible text chat and model listing from a native Android client.
-- Use the Anthropic Messages endpoint for text with an Anthropic-compatible client.
-- Keep requests on localhost between the app and the bridge. The Antigravity CLI uses its normal connection to Google for model requests.
-
-The OpenAI API can return buffered streaming chunks after generation completes. Images, tool calls, and the OpenAI Responses API are outside the current interface.
+Use a text workflow that calls one of the supported endpoints. OpenAI streaming clients receive buffered chunks after generation completes.
 
 ## What has been tested
 

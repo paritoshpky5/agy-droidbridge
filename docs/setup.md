@@ -6,6 +6,12 @@ Start with the [quick start](../README.md#get-started). The bridge needs a signe
 
 Antigravity only loads the DroidBridge text agent from an approved workspace. When setup reports the agent is missing, run `./agy-droidbridge trust`, approve its dedicated folder in Antigravity, exit Antigravity, and run `./agy-droidbridge start`. Approve the folder printed by the CLI. The bridge uses that same workspace after restart.
 
+## Set the URL and key in your tool
+
+Your BYOK client needs a custom endpoint and a key setting, and it must make requests from the phone running Termux. For OpenAI-compatible clients, use `http://127.0.0.1:8766/v1` and select Chat Completions. For a client that uses the Anthropic Messages API, use `http://127.0.0.1:8766`. If a client asks for a full request URL, append `/chat/completions` to the OpenAI base URL or `/v1/messages` to the Anthropic base URL.
+
+Use the key from `~/.local/share/agy-droidbridge/api-key` as the client's token. OpenAI-compatible requests use bearer authentication. Anthropic-compatible requests can use `x-api-key` or bearer authentication.
+
 ## Make a request from Termux
 
 ```sh
@@ -19,7 +25,7 @@ auth_header | curl -fsS -H @- -H 'Content-Type: application/json' \
   http://127.0.0.1:8766/v1/chat/completions
 ```
 
-The example chat uses the CLI's current selection when the bridge has no previously successful selection. A chat request uses your normal Antigravity allowance. For a particular model, pass an ID from `/v1/models` in the `model` field.
+The example uses the CLI's current model selection when the bridge has no previously successful selection. Requests use the signed-in Antigravity account's allowance. For a particular model, pass an ID from `/v1/models` in the `model` field.
 
 ## Refresh available models
 
@@ -33,10 +39,10 @@ Set `AGY_MODELS_FILE` to use your own plain-text list of model IDs and labels. U
 | --- | --- |
 | Setup cannot find `agy` | Run `agy --version`. For an executable outside your `PATH`, use `AGY_BIN=/path/to/agy ./agy-droidbridge install`. |
 | Antigravity has not loaded the DroidBridge text agent | Run `./agy-droidbridge trust` and complete the workspace approval before starting the bridge. |
-| The app cannot connect | Run `./agy-droidbridge status`. Check that the app is on the same device, its base URL ends in `/v1`, and it allows HTTP for localhost. |
+| The tool cannot connect | Run `./agy-droidbridge status`. Check that the tool sends requests from the phone, allows HTTP for localhost, and uses the base URL for its API format. |
 | The API returns `401` | Copy the key from the path printed by setup. OpenAI clients send it as bearer authentication. |
 | Model is unavailable | Run `agy models` to check sign-in, then run `./agy-droidbridge models` to refresh the list. |
-| The bridge exits on startup | Check `~/.local/share/agy-droidbridge/bridge.log`. If the port is in use, run `AGY_PORT=8767 ./agy-droidbridge install` and update the app URL. |
+| The bridge exits on startup | Check `~/.local/share/agy-droidbridge/bridge.log`. If the port is in use, run `AGY_PORT=8767 ./agy-droidbridge install` and update the client URL. |
 
 ## Run from an existing binary
 
