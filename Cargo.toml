@@ -1,0 +1,28 @@
+[package]
+name = "agy-droidbridge"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+
+[workspace]
+resolver = "3"
+
+[dependencies]
+axum = { version = "0.8", default-features = false, features = ["http1", "json", "tokio"] }
+tokio = { version = "1", features = ["io-util", "macros", "net", "process", "rt", "signal", "sync", "time"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+http-body-util = "0.1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", default-features = false, features = ["fmt", "std"] }
+thiserror = "2"
+uuid = { version = "1", features = ["v4"] }
+tempfile = "3"
+subtle = "2"
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[profile.release]
+strip = true
+lto = "thin"

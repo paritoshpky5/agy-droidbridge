@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage: ./agy-droidbridge <command>
+
+  install [arm64-binary]  Build or install the proxy, then start it
+  models                 Save the model list from your Antigravity account
+  trust                  Open Antigravity in the DroidBridge workspace
+  start                  Start an installed proxy
+  stop                   Stop the proxy
+  restart                Restart the proxy
+  status                 Check the local API
+  help                   Show this help
+EOF
+}
+
+case ${1:-help} in
+  help|-h|--help) usage; exit 0 ;;
+  install) command=setup ;;
+  start|stop|restart|status|models|trust) command=$1 ;;
+  *) printf 'Unknown command: %s\n\n' "$1" >&2; usage >&2; exit 2 ;;
+esac
+shift
+if [[ $command != setup && $# -ne 0 ]]; then
+  printf '%s takes no arguments. Run ./agy-droidbridge help for usage.\n' "$command" >&2
+  exit 2
+fi
+
+root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+exec bash "$root/scripts/$command.sh" "$@"
