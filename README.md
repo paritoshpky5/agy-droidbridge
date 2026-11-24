@@ -20,15 +20,21 @@ Paste this line into Termux on your ARM64 Android phone.
 
 Setup reuses a compatible Antigravity CLI when it finds one. On a fresh install it downloads Google's Linux CLI and runs it through Termux's PRoot package. [See the download and disk sizes](BENCHMARK_REPORT.md#one-paste-install-footprint).
 
-When Antigravity opens, sign in if prompted, approve the DroidBridge workspace, and exit Antigravity. The same setup command resumes and starts DroidBridge automatically. The terminal prints the server URL and where to find your API key.
+### Finish setup in Antigravity
 
-After setup, `agy-droidbridge status` checks the local API. You can also make a health request from Termux.
+1. If you see **Choose your color scheme**, pick one, press Enter, and continue through **Next**.
+2. Sign in if prompted. When Antigravity asks which folder to trust, approve the DroidBridge workspace at `~/.local/share/agy-droidbridge/workspace`.
+3. At the Antigravity prompt, type **`/exit`** and press Enter. Keep the same Termux session open. The installer is waiting for Antigravity to close, then it starts the bridge and prints **`Bridge running`**.
+
+### Check that it works
+
+After you see **`Bridge running`**, open [the health check](http://127.0.0.1:8766/healthz) in a browser on the same phone, or run this in Termux.
 
 ```sh
 curl -fsS http://127.0.0.1:8766/healthz
 ```
 
-The response should be `{"ok":true,"service":"agy-droidbridge"}`. If setup stops, check the [setup guide](docs/setup.md#common-issues) for the error shown above it.
+You should see `{"ok":true,"service":"agy-droidbridge"}`. If the page still fails to load after you exit Antigravity, check the last message in Termux or see the [setup guide](docs/setup.md#common-issues).
 
 ## Connect a BYOK client
 
@@ -49,9 +55,18 @@ OpenAI streaming clients receive buffered chunks after generation finishes. See 
 | --- | --- |
 | Android ARM64 executable on disk | **1.54 MiB** |
 | Idle bridge memory on an Android 14 x86-64 emulator | **4.21–4.27 MiB** median RSS across two trials |
-| Idle working set in the Windows mock benchmark | **6.29 MiB** for DroidBridge, **55.48 MiB** for the Node reference, **50.68 MiB** for the Python reference |
 
-The Windows comparison measured **about 88% lower idle working set** for DroidBridge against the Python reference. The Python server finished the four-client workload sooner by launching CLI processes in parallel. The idle measurements cover the bridge process alone. See the [benchmark report](BENCHMARK_REPORT.md) for both workloads and reproduction commands.
+### Windows comparison
+
+All three proxies ran on the same Windows PC with the same mock Antigravity CLI.
+
+| Metric | DroidBridge | Node reference | Python reference |
+| --- | ---: | ---: | ---: |
+| Idle process memory | **6.29 MiB** | 55.48 MiB | 50.68 MiB |
+| Startup to a healthy HTTP response | **45.54 ms** | 146.20 ms | 672.31 ms |
+| Throughput with four concurrent requests | 5.32 req/s | 5.06 req/s | **17.40 req/s** |
+
+DroidBridge used **about 89% less idle memory** than the Node reference and took **about 69% less time to start**. Python finished the four-client workload sooner by running four mock CLI processes in parallel. Real Antigravity response times are outside this measurement. [Benchmark method and reproduction commands](BENCHMARK_REPORT.md) · [Node reference](https://github.com/anyrobert/agy-api-proxy)
 
 ## Use your Antigravity allowance
 
@@ -61,7 +76,7 @@ DroidBridge sends requests through your signed-in Antigravity account. Requests 
 
 ## Testing and development
 
-The HTTP contract and the official OpenAI JavaScript SDK passed against a mock CLI. An Android 14 emulator app reached the bridge over localhost before and after a restart. A live Antigravity session on a physical ARM64 phone is still pending. See the [test report](TEST_REPORT.md) and [architecture](ARCHITECTURE.md).
+The HTTP contract and the official OpenAI JavaScript SDK passed against a mock CLI. An Android 14 emulator app reached the bridge over localhost before and after a restart. The Antigravity CLI reached a signed-in prompt in the DroidBridge workspace on a physical ARM64 phone. A live API completion through the bridge on that phone is still pending. See the [test report](TEST_REPORT.md) and [architecture](ARCHITECTURE.md).
 
 If you try it, [open an issue](https://github.com/paritoshpky5/agy-droidbridge/issues) with your Android version, Android architecture, `agy --version`, and the step you reached. Keep API keys and account details out of reports.
 
