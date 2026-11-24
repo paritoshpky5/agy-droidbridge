@@ -4,10 +4,15 @@ set -euo pipefail
 root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
 source "$root/scripts/common.sh"
 
-usage='Usage: ./agy-droidbridge install [arm64-binary]'
+usage='Usage: ./agy-droidbridge install [--interactive] [arm64-binary]'
 if [[ ${1:-} == --help || ${1:-} == -h ]]; then
   printf '%s\nBuild the proxy on ARM64 Termux or install an existing Android ARM64 binary.\n' "$usage"
   exit 0
+fi
+interactive=0
+if [[ ${1:-} == --interactive ]]; then
+  interactive=1
+  shift
 fi
 (( $# <= 1 )) || die "$usage"
 [[ $(uname -m) == aarch64 && ${PREFIX:-} == */files/usr ]] \
@@ -19,12 +24,7 @@ if (( $# )); then
 fi
 read_port
 read_cli
-cli_help=$("$cli" --help 2>&1) || die 'Antigravity CLI could not run. Check agy --version in Termux.'
-for flag in --agent --disable-slash-commands --output-format --model; do
-  if [[ $cli_help != *"$flag"* ]]; then
-    die "The installed Antigravity CLI does not list $flag. Update agy, then run install again."
-  fi
-done
+check_cli "$cli" || exit 1
 
 packages=()
 command -v curl >/dev/null || packages+=(curl)
@@ -63,5 +63,11 @@ if [[ ! -s "$state/api-key" ]]; then
   printf '%s\n' "$key" > "$state/api-key"
 fi
 chmod 600 -- "$state/api-key"
+if (( interactive )); then
+  prepare_workspace
+  if ! agent_available; then
+    open_workspace
+  fi
+fi
 start_proxy
 printf 'Find the API key in %s/api-key. Use it in the key or token field of your BYOK tool.\n' "$state"

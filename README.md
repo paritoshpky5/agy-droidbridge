@@ -12,38 +12,23 @@ The ARM64 bridge executable is **1.54 MiB**. Google sign-in and model usage go t
 
 ## Get started
 
-### 1. Check Antigravity in Termux
-
-You need an ARM64 Android phone and a signed-in Antigravity CLI that runs from the same Termux shell.
+Paste this line into Termux on your ARM64 Android phone.
 
 ```sh
-uname -m
-agy --version
-agy models
+(command -v curl >/dev/null || pkg install -y curl) && curl -fsSL https://raw.githubusercontent.com/paritoshpky5/agy-droidbridge/v0.1.0/install.sh | bash
 ```
 
-Look for `aarch64`, a CLI version, and a model list. If Antigravity asks you to sign in, open `agy`, finish sign-in, and exit the CLI before continuing. If `agy --version` fails, see [the CLI prerequisite](docs/setup.md#check-the-antigravity-cli).
+Setup downloads the bridge and reuses a compatible Antigravity CLI when it finds one. Otherwise it downloads the official Antigravity binary and prepares it for Termux. The first install can take a few minutes.
 
-### 2. Install and start DroidBridge
+When Antigravity opens, sign in if prompted, approve the DroidBridge workspace, and exit Antigravity. The same setup command resumes and starts DroidBridge automatically. The terminal prints the server URL and where to find your API key.
 
-```sh
-pkg install git
-git clone https://github.com/paritoshpky5/agy-droidbridge.git &&
-cd agy-droidbridge &&
-./agy-droidbridge install
-```
-
-Setup builds the bridge, creates your API key, and starts the server once the Antigravity workspace is approved. If setup asks for approval, run `./agy-droidbridge trust`. Approve the folder shown in Antigravity, exit Antigravity, then run `./agy-droidbridge start`.
-
-### 3. Verify the local API
-
-Wait for `Bridge running at http://127.0.0.1:8766/v1`, then run this in Termux.
+After setup, `agy-droidbridge status` checks the local API. You can also make a health request from Termux.
 
 ```sh
 curl -fsS http://127.0.0.1:8766/healthz
 ```
 
-The response should be `{"ok":true,"service":"agy-droidbridge"}`. If curl reports `Failed to connect`, run `./agy-droidbridge status` from the checkout and check the [startup steps](docs/setup.md#common-issues).
+The response should be `{"ok":true,"service":"agy-droidbridge"}`. If setup stops, check the [setup guide](docs/setup.md#common-issues) for the error shown above it.
 
 ## Connect a BYOK client
 
@@ -54,7 +39,7 @@ Your client must accept a **custom base URL and an API key** and send its HTTP r
 | OpenAI-compatible | `http://127.0.0.1:8766/v1` | Chat Completions and model listing |
 | Anthropic-compatible | `http://127.0.0.1:8766` | Messages |
 
-Use the key from `~/.local/share/agy-droidbridge/api-key` in the client's API key or token field. If the client asks for a model, run `./agy-droidbridge models` and select an ID from the refreshed list.
+Use the key from `~/.local/share/agy-droidbridge/api-key` in the client's API key or token field. If the client asks for a model, run `agy-droidbridge models` and select an ID from the refreshed list.
 
 OpenAI streaming clients receive buffered chunks after generation finishes. See the [setup guide](docs/setup.md) for a complete curl request, lifecycle commands, and troubleshooting.
 

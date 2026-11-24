@@ -48,9 +48,24 @@ read_cli() {
   if [[ -z $configured && -f "$state/cli" ]]; then
     read -r configured < "$state/cli"
   fi
-  cli=$(command -v -- "${configured:-agy}") || die 'Install Antigravity CLI or set AGY_BIN.'
+  cli=$(command -v -- "${configured:-agy}") ||
+    die 'Antigravity CLI was not found. Use the one-paste Termux setup in the README or set AGY_BIN to a working executable.'
   [[ -f $cli && -x $cli ]] || die 'Antigravity CLI is not an executable file.'
   cli=$(realpath -- "$cli")
+}
+
+check_cli() {
+  local cli_help flag
+  if ! cli_help=$("$1" --help 2>&1); then
+    printf 'Antigravity CLI could not run. Check agy --version in Termux.\n' >&2
+    return 1
+  fi
+  for flag in --agent --disable-slash-commands --output-format --model; do
+    if [[ $cli_help != *"$flag"* ]]; then
+      printf 'The installed Antigravity CLI does not list %s. Update agy, then run install again.\n' "$flag" >&2
+      return 1
+    fi
+  done
 }
 
 prepare_workspace() {
@@ -63,6 +78,13 @@ agent_available() {
   agents=$(cd -- "$workspace" && timeout 10 "$cli" agents 2>/dev/null) || return 1
   grep -Fxq 'agy-droidbridge-text' <<< "$agents"
 }
+
+open_workspace() (
+  printf 'Sign in to Antigravity if prompted, approve this DroidBridge workspace, then exit Antigravity to continue.\n'
+  cd -- "$workspace"
+  exec 9>&-
+  exec "$cli"
+)
 
 auth_probe() {
   local key=$1

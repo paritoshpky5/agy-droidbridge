@@ -21,7 +21,7 @@ cleanup() {
 trap cleanup EXIT
 
 for script in "$launcher" "$root"/scripts/*.sh; do bash -n "$script"; done
-"$launcher" --help | grep -F 'install [arm64-binary]'
+"$launcher" --help | grep -F 'install [--interactive] [arm64-binary]'
 if "$launcher" status extra >"$sandbox/result" 2>&1; then exit 1; fi
 grep -F 'takes no arguments' "$sandbox/result"
 
@@ -97,4 +97,9 @@ grep -Fx 'valid-model  Valid model' "$AGY_STATE_DIR/models.txt"
 [[ $(cat "$AGY_STATE_DIR/api-key") == "$key_before" ]]
 "$launcher" stop
 if "$launcher" status; then exit 1; fi
+rm -f -- "$AGY_STATE_DIR/test-trusted"
+"$launcher" install --interactive "$sandbox/fake-binary"
+[[ -f "$AGY_STATE_DIR/test-trusted" ]]
+"$launcher" status
+"$launcher" stop
 printf 'Installer, lifecycle, and model refresh passed with local shims.\n'

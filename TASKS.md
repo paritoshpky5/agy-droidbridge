@@ -10,6 +10,7 @@
 - [x] Build both Android targets and test localhost with an emulator app
 - [x] Document ARM64 executable size and reproduce idle memory measurements in the emulator
 - [x] Measure the Rust, Node, and Python bridges with a shared mock CLI
+- [x] Package a one-paste Termux installer with pinned downloads and interactive workspace approval
 - [ ] Install and run on a physical ARM64 Android phone
 - [ ] Verify generation through a signed-in Antigravity CLI on that phone
 

@@ -9,6 +9,7 @@ Verification on November 24, 2026 used Windows x64, an Android 14 x86-64 emulato
 | HTTP contract with the reference comparison | All nine tests passed with a local mock CLI. |
 | OpenAI JavaScript SDK | Model listing, completion, buffered streaming with usage, and invalid key handling passed. |
 | Installer and lifecycle | Bash checks passed with local shims for install, workspace approval, start, model refresh, rejected catalog updates, restart, and stop. |
+| One-paste setup | A smoke test used the release downloads and local execution shims for a fresh install without `agy`, workspace approval, server startup, and a retry that retained the API key. The pinned CLI and compatibility shim were checked for required flags and dynamic symbols. |
 | Official Antigravity CLI 1.5.16 on Windows | Verified the required flags. In an isolated profile, the exact DroidBridge agent was absent before workspace approval and present after it. |
 | Android 14 x86-64 emulator | An Android app passed localhost health, invalid-key handling, model listing, and Chat Completions before and after a bridge restart. The CLI was mocked. |
 | Android ARM64 | Built an Android API 24 AArch64 ELF with 16 KiB segment alignment. The binary is 1,615,544 bytes. Execution on a phone is pending. |
