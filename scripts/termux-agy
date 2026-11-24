@@ -1,0 +1,18 @@
+#!/system/bin/sh
+set -eu
+
+location=$(realpath -- "$0")
+directory=$(dirname -- "$location")
+prefix=${PREFIX:-/data/data/com.termux/files/usr}
+export SSL_CERT_FILE="${SSL_CERT_FILE:-$prefix/etc/tls/cert.pem}"
+export AGY_CLI_DISABLE_AUTO_UPDATE=true
+unset LD_PRELOAD
+
+set -- --kill-on-exit -r / -b "$prefix/etc:/etc" -b "$prefix/bin:/bin" \
+    -b "$prefix:/usr" -w "$PWD" "$directory/antigravity" "$@"
+if [ -f "${prefix%/usr}/applib/libproot-loader.so" ]; then
+    set -- /system/bin/linker64 "$prefix/bin/proot" "$@"
+else
+    set -- "$prefix/bin/proot" "$@"
+fi
+exec "$@"

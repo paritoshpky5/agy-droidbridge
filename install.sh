@@ -31,10 +31,10 @@ install_droidbridge() {
     pkg install -y "${packages[@]}"
   fi
 
-  local release=v0.1.0 cli_version=1.2.7
+  local release=v0.1.1 cli_version=1.5.16
   local release_url=https://github.com/paritoshpky5/agy-droidbridge/releases/download
   local upstream_url=https://github.com/google-antigravity/antigravity-cli/releases/download
-  local archive=agy_cli_linux_arm64.tar.gz
+  local archive=agy_cli_linux_arm64_musl.tar.gz
   local state=${AGY_STATE_DIR:-"$HOME/.local/share/agy-droidbridge"}
   mkdir -p -- "$state"
   chmod 700 -- "$state"
@@ -51,7 +51,7 @@ install_droidbridge() {
     printf 'Downloading the DroidBridge release…\n'
     mkdir -p -- "$work/launcher"
     fetch "$release_url/$release/agy-droidbridge-launcher.tar.gz" \
-      '588044f0e139b38738f53e7fff660991cd0b7487e19973e5cb84fd6a78c0ba5b' "$work/launcher.tar.gz"
+      'dbad9a1f7dd318b51be6c2af853aa1bb9904ee68fb3b68c25e51794e03e3b8d3' "$work/launcher.tar.gz"
     tar -xzf "$work/launcher.tar.gz" -C "$work/launcher"
     fetch "$release_url/$release/$asset" \
       'ce61b052c1256e79658c176ee947626cc0a794631dea1aaa4540f196f2ff4471' "$work/launcher/$asset"
@@ -62,7 +62,7 @@ install_droidbridge() {
   fi
 
   source "$app/scripts/common.sh"
-  local chosen=${AGY_BIN:-} cli_home="$state/termux-cli-$cli_version"
+  local chosen=${AGY_BIN:-} cli_home="$state/linux-cli-$cli_version"
   if [[ -z $chosen && -s $state/cli ]]; then
     read -r chosen < "$state/cli"
   fi
@@ -77,19 +77,23 @@ install_droidbridge() {
   else
     chosen="$cli_home/agy"
     if ! check_cli "$chosen" 2>/dev/null; then
-      printf 'Installing Antigravity %s for Termux. This downloads the official CLI and builds its compatibility shim.\n' "$cli_version"
-      pkg install -y clang python patchelf
-      mkdir -p -- "$cli_home"
-      fetch 'https://codeload.github.com/Aarstad/agy-termux-musl/tar.gz/0429897e9bde85773f65177f1db9444e20040bf1' \
-        '35d1abad391cb163d44b06550015d19275b44c5595695157ca295c2c706f5ef7' "$work/termux.tar.gz"
-      tar -xzf "$work/termux.tar.gz" --strip-components=1 -C "$cli_home"
-      cat "$app/scripts/termux-musl-stdio.c" >> "$cli_home/shim.c"
+      printf 'Preparing the official Antigravity %s Linux build for Termux.\n' "$cli_version"
+      local -a cli_packages=()
+      [[ -x $PREFIX/bin/proot ]] || cli_packages+=(proot)
+      [[ -s $PREFIX/etc/resolv.conf ]] || cli_packages+=(resolv-conf)
+      if (( ${#cli_packages[@]} )); then
+        pkg install -y "${cli_packages[@]}"
+      fi
+      mkdir -p -- "$work/cli"
       fetch "$upstream_url/$cli_version/$archive" \
-        '8ddbb669158de1d1bc4c1fe5c130dca8f51da80d62569a54a4133f06768a723b' "$work/$archive"
-      tar -xzf "$work/$archive" -C "$work" antigravity
-      bash "$cli_home/install.sh" --from-binary "$work/antigravity" ||
-        fail 'The Termux compatibility build failed. Share the installer error so it can be diagnosed.'
-      check_cli "$chosen" || fail 'Antigravity was installed but could not run with the required flags.'
+        '79e2477421b1146ff2e45c4540f19715f20bd61550368508b9072157842560e8' "$work/$archive"
+      tar -xzf "$work/$archive" -C "$work/cli" antigravity
+      install -m 700 -- "$app/scripts/termux-agy" "$work/cli/agy"
+      check_cli "$work/cli/agy" || fail 'The official CLI could not start through Termux PRoot.'
+      if [[ -e $cli_home || -L $cli_home ]]; then
+        mv -T -- "$cli_home" "$work/old-cli"
+      fi
+      mv -T -- "$work/cli" "$cli_home"
     fi
     if [[ ! -e $PREFIX/bin/agy && ! -L $PREFIX/bin/agy ]]; then
       ln -s -- "$chosen" "$PREFIX/bin/agy"

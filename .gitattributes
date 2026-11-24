@@ -2,5 +2,5 @@
 /agy-droidbridge text eol=lf
 *.sh text eol=lf
 *.rs text eol=lf
-*.c text eol=lf
+/scripts/termux-agy text eol=lf
 *.mjs text eol=lf

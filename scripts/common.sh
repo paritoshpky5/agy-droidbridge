@@ -56,8 +56,8 @@ read_cli() {
 
 check_cli() {
   local cli_help flag
-  if ! cli_help=$("$1" --help 2>&1); then
-    printf 'Antigravity CLI could not run. Check agy --version in Termux.\n' >&2
+  if ! cli_help=$(timeout 30 "$1" --help 2>&1); then
+    printf 'Antigravity CLI could not run from %s.\n%s\n' "$1" "$cli_help" >&2
     return 1
   fi
   for flag in --agent --disable-slash-commands --output-format --model; do

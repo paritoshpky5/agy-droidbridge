@@ -1,6 +1,6 @@
 # Setup and troubleshooting
 
-Start with the [one-paste setup](../README.md#get-started). The installer checks the release downloads and uses [agy-termux-musl](https://github.com/Aarstad/agy-termux-musl) to prepare [Google's CLI 1.2.7](https://github.com/google-antigravity/antigravity-cli/releases/tag/1.2.7) when Termux does not already have a compatible one.
+Start with the [one-paste setup](../README.md#get-started). If Termux needs a CLI, setup checks the download and runs [Google's Linux CLI 1.5.16](https://github.com/google-antigravity/antigravity-cli/releases/tag/1.5.16) through PRoot. PRoot lets the Linux executable start in Termux without loading it through Android's Bionic linker.
 
 ## Check the Antigravity CLI
 
@@ -57,6 +57,7 @@ Run `agy-droidbridge status` after the one-paste install. From a source checkout
 | Symptom | What to check |
 | --- | --- |
 | Setup cannot find `agy` | Use the [one-paste setup](../README.md#get-started) to install it. For a source checkout and an executable outside your `PATH`, use `AGY_BIN=/path/to/agy ./agy-droidbridge install --interactive`. |
+| Setup reports an underaligned TLS segment | This can happen with the v0.1.0 installer on Google Play Termux. Run the [updated one-paste setup](../README.md#get-started). |
 | Antigravity has not loaded the DroidBridge text agent | Run `./agy-droidbridge trust` and complete the workspace approval before starting the bridge. |
 | Health check reports `curl: (7) Failed to connect` | Finish [setup](../README.md#get-started) first. If setup had succeeded, run `agy-droidbridge start` and use the port it prints when checking `/healthz`. |
 | The tool cannot connect | Run `./agy-droidbridge status`. Check that the tool sends requests from the phone, allows HTTP for localhost, and uses the base URL for its API format. |
