@@ -31,7 +31,7 @@ install_droidbridge() {
     pkg install -y "${packages[@]}"
   fi
 
-  local release=v0.1.1 cli_version=1.5.16
+  local release=v0.1.2 cli_version=1.5.16
   local release_url=https://github.com/paritoshpky5/agy-droidbridge/releases/download
   local upstream_url=https://github.com/google-antigravity/antigravity-cli/releases/download
   local archive=agy_cli_linux_arm64_musl.tar.gz
@@ -51,7 +51,7 @@ install_droidbridge() {
     printf 'Downloading the DroidBridge release…\n'
     mkdir -p -- "$work/launcher"
     fetch "$release_url/$release/agy-droidbridge-launcher.tar.gz" \
-      'dbad9a1f7dd318b51be6c2af853aa1bb9904ee68fb3b68c25e51794e03e3b8d3' "$work/launcher.tar.gz"
+      '2d5968aaee24c807cb4c303834d7aff0ba7968265fc2604cd4b32afeb628db43' "$work/launcher.tar.gz"
     tar -xzf "$work/launcher.tar.gz" -C "$work/launcher"
     fetch "$release_url/$release/$asset" \
       'ce61b052c1256e79658c176ee947626cc0a794631dea1aaa4540f196f2ff4471' "$work/launcher/$asset"
@@ -63,6 +63,10 @@ install_droidbridge() {
 
   source "$app/scripts/common.sh"
   local chosen=${AGY_BIN:-} cli_home="$state/linux-cli-$cli_version"
+  if [[ -s $cli_home/antigravity && -x $cli_home/agy ]]; then
+    install -m 700 -- "$app/scripts/termux-agy" "$work/agy"
+    mv -f -- "$work/agy" "$cli_home/agy"
+  fi
   if [[ -z $chosen && -s $state/cli ]]; then
     read -r chosen < "$state/cli"
   fi

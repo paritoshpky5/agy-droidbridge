@@ -1,8 +1,8 @@
 #!/system/bin/sh
 set -eu
 
-location=$(realpath -- "$0")
-directory=$(dirname -- "$location")
+location=$(/system/bin/realpath "$0")
+directory=${location%/*}
 prefix=${PREFIX:-/data/data/com.termux/files/usr}
 export SSL_CERT_FILE="${SSL_CERT_FILE:-$prefix/etc/tls/cert.pem}"
 export AGY_CLI_DISABLE_AUTO_UPDATE=true

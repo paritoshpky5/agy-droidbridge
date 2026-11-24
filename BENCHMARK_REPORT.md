@@ -30,7 +30,7 @@ These measurements cover executable size on disk and emulator idle memory. Physi
 | Official Antigravity 1.5.16 ARM64 Linux musl download, when needed | 84.37 MiB |
 | Official Antigravity executable on disk | 222.43 MiB |
 
-The v0.1.1 installer adds PRoot and resolver configuration when needed. The earlier installer added a compiler toolchain, Python, and `patchelf`. With a compatible CLI already available, setup reuses it. The Windows comparison below measures the bridge processes with a stub CLI. [DroidBridge release](https://github.com/paritoshpky5/agy-droidbridge/releases/tag/v0.1.1) · [Antigravity CLI release](https://github.com/google-antigravity/antigravity-cli/releases/tag/1.5.16)
+The current installer adds PRoot and resolver configuration when needed. The original v0.1.0 installer added a compiler toolchain, Python, and `patchelf`. With a compatible CLI already available, setup reuses it. The Windows comparison below measures the bridge processes with a stub CLI. [DroidBridge release](https://github.com/paritoshpky5/agy-droidbridge/releases/tag/v0.1.2) · [Antigravity CLI release](https://github.com/google-antigravity/antigravity-cli/releases/tag/1.5.16)
 
 ## Windows comparison with Node and Python
 

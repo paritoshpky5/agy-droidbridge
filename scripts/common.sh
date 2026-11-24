@@ -56,7 +56,7 @@ read_cli() {
 
 check_cli() {
   local cli_help flag
-  if ! cli_help=$(timeout 30 "$1" --help 2>&1); then
+  if ! cli_help=$(timeout 30 env -u LD_PRELOAD "$1" --help 2>&1); then
     printf 'Antigravity CLI could not run from %s.\n%s\n' "$1" "$cli_help" >&2
     return 1
   fi

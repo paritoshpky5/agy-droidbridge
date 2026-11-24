@@ -15,7 +15,7 @@ The ARM64 bridge executable is **1.54 MiB**. Google sign-in and model usage go t
 Paste this line into Termux on your ARM64 Android phone.
 
 ```sh
-(command -v curl >/dev/null || pkg install -y curl) && curl -fsSL https://raw.githubusercontent.com/paritoshpky5/agy-droidbridge/v0.1.1/install.sh | bash
+(command -v curl >/dev/null || pkg install -y curl) && curl -fsSL https://raw.githubusercontent.com/paritoshpky5/agy-droidbridge/v0.1.2/install.sh | bash
 ```
 
 Setup reuses a compatible Antigravity CLI when it finds one. On a fresh install it downloads Google's Linux CLI and runs it through Termux's PRoot package. [See the download and disk sizes](BENCHMARK_REPORT.md#one-paste-install-footprint).
