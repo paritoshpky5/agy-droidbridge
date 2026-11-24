@@ -21,6 +21,17 @@ pwsh ./benchmarks/android-idle.ps1 -Serial emulator-5554
 
 These measurements cover executable size on disk and emulator idle memory. Physical-device RAM, full Termux and CLI memory, battery use, and live generation performance remain unmeasured.
 
+## One-paste install footprint
+
+| Item | Size |
+| --- | ---: |
+| DroidBridge ARM64 download | 1.54 MiB |
+| DroidBridge executable files after setup, including the copy cached for retries | 3.08 MiB |
+| Official Antigravity 1.2.7 ARM64 download, when needed | 55.39 MiB |
+| Official Antigravity executable before Termux preparation | 203.27 MiB |
+
+On a fresh setup, Termux also installs `clang`, `python`, and `patchelf` for Antigravity compatibility. Their download and disk usage depend on what is already installed. With a working compatible CLI, setup reuses it and skips those downloads. The Windows comparison below measures the bridge processes with a stub CLI. [DroidBridge release](https://github.com/paritoshpky5/agy-droidbridge/releases/tag/v0.1.0) · [Antigravity CLI release](https://github.com/google-antigravity/antigravity-cli/releases/tag/1.2.7)
+
 ## Windows comparison with Node and Python
 
 On November 24, 2026, all three servers ran on the same Windows x64 host with a Ryzen 5 3550H. DroidBridge used its optimized Windows build. The [Node reference](https://github.com/anyrobert/agy-api-proxy/tree/98107d5cdb9e1bb7ed43e88b5e62e0adcaede43f) ran at commit `98107d5` on Node.js 24.14.0. The [Python reference](https://pypi.org/project/antigravity-proxy/0.1.1/) ran on CPython 3.14.3 with FastAPI 0.165.0 and Uvicorn 0.54.0.

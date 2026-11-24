@@ -18,7 +18,7 @@ Paste this line into Termux on your ARM64 Android phone.
 (command -v curl >/dev/null || pkg install -y curl) && curl -fsSL https://raw.githubusercontent.com/paritoshpky5/agy-droidbridge/v0.1.0/install.sh | bash
 ```
 
-Setup downloads the bridge and reuses a compatible Antigravity CLI when it finds one. Otherwise it downloads the official Antigravity binary and prepares it for Termux. The first install can take a few minutes.
+Setup downloads the bridge and reuses a compatible Antigravity CLI when it finds one. With a fresh Termux install, setup also needs the Antigravity CLI download and packages to build its compatibility shim. That makes the first install larger and can take a few minutes. [See the download and disk sizes](BENCHMARK_REPORT.md#one-paste-install-footprint).
 
 When Antigravity opens, sign in if prompted, approve the DroidBridge workspace, and exit Antigravity. The same setup command resumes and starts DroidBridge automatically. The terminal prints the server URL and where to find your API key.
 
