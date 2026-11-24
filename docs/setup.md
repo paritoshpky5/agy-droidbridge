@@ -35,6 +35,8 @@ Set `AGY_MODELS_FILE` to use your own plain-text list of model IDs and labels. U
 
 ## Common issues
 
+Run `./agy-droidbridge status` to check liveness. Use `./agy-droidbridge start`, `stop`, or `restart` to manage the server from the checkout.
+
 | Symptom | What to check |
 | --- | --- |
 | Setup cannot find `agy` | Run `agy --version`. For an executable outside your `PATH`, use `AGY_BIN=/path/to/agy ./agy-droidbridge install`. |

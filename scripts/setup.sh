@@ -64,4 +64,4 @@ if [[ ! -s "$state/api-key" ]]; then
 fi
 chmod 600 -- "$state/api-key"
 start_proxy
-printf 'Find the API key in %s/api-key. Copy it into your chat app.\n' "$state"
+printf 'Find the API key in %s/api-key. Use it in the key or token field of your BYOK tool.\n' "$state"
