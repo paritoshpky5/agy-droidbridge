@@ -6,7 +6,7 @@ AGY DroidBridge gives apps, scripts, and automations a local API for the Antigra
 
 The ARM64 bridge executable is **1.54 MiB**. Google sign-in and model usage go through the Antigravity CLI.
 
-[Get started](#get-started) · [Connect a BYOK client](#connect-a-byok-client) · [Size and memory](#size-and-memory)
+[Get started](#get-started) · [Start or restart](#start-or-restart-droidbridge) · [Connect a BYOK client](#connect-a-byok-client) · [Size and memory](#size-and-memory)
 
 ![AGY DroidBridge connects BYOK apps and tools to Antigravity running in Termux](docs/media/overview.png)
 
@@ -35,6 +35,24 @@ curl -fsS http://127.0.0.1:8766/healthz
 ```
 
 You should see `{"ok":true,"service":"agy-droidbridge"}`. If the page still fails to load after you exit Antigravity, check the last message in Termux or see the [setup guide](docs/setup.md#common-issues).
+
+## Start or restart DroidBridge
+
+After the one-paste setup finishes, open Termux and run this from any folder. Use it after closing Termux or rebooting your phone.
+
+```sh
+agy-droidbridge start
+```
+
+Wait for **`Bridge running`** or **`Bridge already running`**, then reconnect your app. The bridge reuses your saved configuration and API key.
+
+| To do this | Run in Termux |
+| --- | --- |
+| Check whether the local API is responding | `agy-droidbridge status` |
+| Stop and start the bridge again | `agy-droidbridge restart` |
+| Stop the bridge | `agy-droidbridge stop` |
+
+If you installed from a [source checkout](docs/setup.md#build-from-source), run `./agy-droidbridge start` from the repository folder. If Termux says `command not found` after an interrupted one-paste install, finish [setup](#get-started) first.
 
 ## Connect a BYOK client
 

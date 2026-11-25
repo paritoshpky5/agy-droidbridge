@@ -52,7 +52,7 @@ Set `AGY_MODELS_FILE` to use your own plain-text list of model IDs and labels. U
 
 ## Common issues
 
-Run `agy-droidbridge status` after the one-paste install. From a source checkout, use `./agy-droidbridge status`. The same command accepts `start`, `stop`, or `restart`.
+See [Start or restart DroidBridge](../README.md#start-or-restart-droidbridge) for the commands to use after reopening Termux.
 
 | Symptom | What to check |
 | --- | --- |
